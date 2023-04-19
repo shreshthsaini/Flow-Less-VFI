@@ -74,7 +74,10 @@ class VFI_DAVIS(torch.utils.data.Dataset):
 # DAVIS Dataset Data Loading Module
 class DAVIS_Module(pl.LightningDataModule):
 	def __init__(self,
-		args
+		batch_size,
+		num_workers,
+		data,
+		image_shape
 	) -> None:
 		"""
 		DAVIS dataset Module
@@ -82,13 +85,13 @@ class DAVIS_Module(pl.LightningDataModule):
 			args: Arguments
 		"""
 		super().__init__()
-		self.batch_size = args.batch_size
-		self.num_workers = args.num_workers
+		self.batch_size = batch_size
+		self.num_workers = num_workers
 
-		self.dataset = VFI_DAVIS(args.data, args.image_shape)
+		self.dataset = VFI_DAVIS(data, image_shape)
 		train_size = int(0.8 * len(self.dataset))
 		test_size = len(self.dataset) - train_size
-		self.train, self.val = torch.utils.data.random_split(self.dataset, [train_size, test_size])
+		self.train, self.val = torch.utils.data.random_split(self.dataset, [train_size, test_size],generator=torch.Generator().manual_seed(7))
 
 
 	def train_dataloader(self):
