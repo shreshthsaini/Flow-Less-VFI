@@ -13,5 +13,7 @@ To train on custom dataset or DAVIS dataset, simply run train.py and change the 
 
 Inference on test data with test.py 
 
-$$if you encounter any issue, feel free to raise a issue on github repo or contact authors at: saini.2@utexas.edu$$
+
+
+Note: if you encounter any issue, feel free to raise a issue on github repo or contact authors at: saini.2@utexas.edu
 
