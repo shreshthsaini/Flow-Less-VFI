@@ -3,22 +3,22 @@
 #SBATCH -J eval0								# Name of the job
 #SBATCH -o eval0.log							# Standard output file
 #SBATCH -p gpu-a100								# Queue (partition) name: ('normal' for CPU, 'gpu-a100' for GPU)
-#SBATCH -N 2									# No.of nodes requested
+#SBATCH -N 3									# No.of nodes requested
 #SBATCH --ntasks-per-node 3 					# No.of tasks per node
-#SBATCH -t 02:30:00								# Run time (hh:mm:ss)
+#SBATCH -t 05:30:00								# Run time (hh:mm:ss)
 #SBATCH --mail-user=krishna.durbha@utexas.edu	# Email-ID for updates.
 #SBATCH --mail-type=all
 
 
 source /work/09076/dks2000/ls6/PythonEnvs/VirtualEnv1/bin/activate
 
-srun python3 ../../pre_train.py \
+srun python3 ../../train.py \
 "/scratch/09076/dks2000/datasets/DAVIS/JPEGImages/480p" \
 --train \
 --main-path "/work/09076/dks2000/ls6/Video-Interpolation" \
---resume-ckpt-path "/work/09076/dks2000/ls6/Video-Interpolation/checkpoints/davis/modified_vrt_config0/self_supervised_best_model.ckpt" \
---epochs 50 \
+--resume-ckpt-path "/work/09076/dks2000/ls6/Video-Interpolation/checkpoints/davis/modified_vrt_config0/best_model.ckpt" \
+--epochs 300 \
 --batch-size 1 \
---lr 0.001 \
---num-nodes 2 \
+--lr 0.0005 \
+--num-nodes 3 \
 --gpu 3

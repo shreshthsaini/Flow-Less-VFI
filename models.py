@@ -22,8 +22,6 @@ warnings.filterwarnings("ignore")
 class Modified_VRT_Config0(nn.Module):
 	"""
 	Modified Video Restoration Transformer Config0.
-	Args:
-
 	"""
 	def __init__(self
 	) -> None:
@@ -32,7 +30,7 @@ class Modified_VRT_Config0(nn.Module):
 		# Architecture
 		self.conv3d_first = nn.Conv3d(in_channels=3, out_channels=64, kernel_size=(1,3,3),stride=(1,1,1),padding=(0,1,1))
 
-		self.stage1 = blocks.Stage(
+		self.down_stage1 = blocks.Stage(
 			in_channels=64,
 			dim=128,
 			depth=2,
@@ -48,7 +46,7 @@ class Modified_VRT_Config0(nn.Module):
 			reshape="down"
 		)
 
-		self.stage2 = blocks.Stage(
+		self.down_stage2 = blocks.Stage(
 			in_channels=128,
 			dim=256,
 			depth=4,
@@ -64,7 +62,7 @@ class Modified_VRT_Config0(nn.Module):
 			reshape="down"
 		)
 
-		self.stage3 = blocks.Stage(
+		self.down_stage3 = blocks.Stage(
 			in_channels=256,
 			dim=256,
 			depth=4,
@@ -80,7 +78,7 @@ class Modified_VRT_Config0(nn.Module):
 			reshape="down"
 		)
 
-		self.stage4 = blocks.Stage(
+		self.BottleNeck = blocks.Stage(
 			in_channels=256,
 			dim=256,
 			depth=8,
@@ -96,7 +94,7 @@ class Modified_VRT_Config0(nn.Module):
 			reshape="none"
 		)
 
-		self.stage5 = blocks.Stage(
+		self.up_stage1 = blocks.Stage(
 			in_channels=256,
 			dim=256,
 			depth=4,
@@ -112,7 +110,7 @@ class Modified_VRT_Config0(nn.Module):
 			reshape="up"
 		)
 
-		self.stage6 = blocks.Stage(
+		self.up_stage2 = blocks.Stage(
 			in_channels=512,
 			dim=128,
 			depth=4,
@@ -128,7 +126,7 @@ class Modified_VRT_Config0(nn.Module):
 			reshape="up"
 		)
 
-		self.stage7 = blocks.Stage(
+		self.up_stage3 = blocks.Stage(
 			in_channels=256,
 			dim=64,
 			depth=2,
@@ -146,7 +144,7 @@ class Modified_VRT_Config0(nn.Module):
 
 		self.reflection_pad2d = custom_layers.reflection_pad2d
 		self.linear_fuse = nn.Conv2d(in_channels=4*64, out_channels=64, kernel_size=(1,1), stride=(1,1))
-		self.conv2d_last = nn.Conv2d(in_channels=64, out_channels=3, kernel_size=(7,7),stride=(1,1))
+		self.conv2d_last = nn.Conv2d(in_channels=64, out_channels=3, kernel_size=(7,7), stride=(1,1))
 
 
 	def forward(self, x):
@@ -160,13 +158,13 @@ class Modified_VRT_Config0(nn.Module):
 		x = x.transpose(1,2)
 		x = self.conv3d_first(x)
 
-		x1 = self.stage1(x)
-		x2 = self.stage2(x1)
-		x3 = self.stage3(x2)
-		y3 = self.stage4(x3)
-		y2 = self.stage5(y3)
-		y1 = self.stage6(torch.concat((y2,x2), dim=1))
-		x = self.stage7(torch.concat((y1,x1), dim=1))
+		x1 = self.down_stage1(x)
+		x2 = self.down_stage2(x1)
+		x3 = self.down_stage3(x2)
+		y3 = self.BottleNeck(x3)
+		y2 = self.up_stage1(y3)
+		y1 = self.up_stage2(torch.concat((y2,x2), dim=1))
+		x = self.up_stage3(torch.concat((y1,x1), dim=1))
 
 		x = torch.cat(torch.unbind(x, 2), 1)
 		x = F.leaky_relu(self.linear_fuse(x), 0.2)
@@ -177,6 +175,9 @@ class Modified_VRT_Config0(nn.Module):
 		x = x[:,0]
 
 		return x
+	
 
-# model = Modified_VRT_Config0()
-# summary(model, input_data=torch.randn(6, 4, 3, 64, 64), col_names=("input_size","output_size"))
+
+model = Modified_VRT_Config0()
+model.eval()
+summary(model, input_data=torch.randn(1, 4, 3, 240, 240), col_names=("input_size","output_size"))

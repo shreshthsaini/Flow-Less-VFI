@@ -37,3 +37,31 @@ def Plot_Images(
 		plt.imshow(V2[i].permute(1, 2, 0))
 		plt.axis("off")
 		plt.savefig(save_path+str(5+i)+".png")
+
+
+def Load_Model(
+	Model: torch.nn.Module,
+	Path
+):
+	"""
+	Loading weights to a PyTorch Model
+	Args:
+		Model (torch.nn.Module): PyTorch Model
+		Path (string): path to best checkpoint save by PyTorch Lightning trainer.
+	Returns:
+		Model (torch.nn.Module): PyTorch Model with trained weights.
+	"""
+	checkpoint = torch.load(Path)
+
+	# Model Weights
+	model_weights = checkpoint["state_dict"]
+	for key in list(model_weights):
+		if "lossfn" in key:
+			model_weights.pop(key)
+		else:
+			model_weights[key.replace("model.", "")] = model_weights.pop(key)
+		
+
+	Model.load_state_dict(model_weights)
+
+	return Model

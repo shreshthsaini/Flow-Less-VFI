@@ -40,13 +40,13 @@ def schedulers(
 	"""
 	if args.scheduler == "CosineAnnealingLR":
 		# print ("Scheduler: CosineAnnealingLR")
-		return torch.optim.lr_scheduler.CosineAnnealingLR(optimizer=optimizer, T_max=args.epochs, eta_min=1e-5)
+		return torch.optim.lr_scheduler.CosineAnnealingLR(optimizer=optimizer, T_max=args.epochs, eta_min=1e-10)
 
 	elif args.scheduler == "CosineAnnealingWarmRestarts":
 		# print ("Scheduler: CosineAnnealingWarmRestarts")
 		if args.warmup_epochs == 0:
 			raise "No.of warmup epochs should be greater than 0."
-		return torch.optim.lr_scheduler.CosineAnnealingWarmRestarts(optimizer=optimizer, T_0=args.warmup_epochs, T_mult=args.multiplier, eta_min=1e-5)
+		return torch.optim.lr_scheduler.CosineAnnealingWarmRestarts(optimizer=optimizer, T_0=args.warmup_epochs, T_mult=args.multiplier, eta_min=1e-10)
 
 	elif args.scheduler == "ReduceLROnPlateau":
 		# print ("Scheduler: ReduceLROnPlateau")
