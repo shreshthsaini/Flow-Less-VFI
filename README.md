@@ -1,19 +1,6 @@
-# This official pytorch implementation for Optical Flow Less Video Frame Interpolation. 
+# Optical Flow Less Video Frame Interpolation
+We used a modified light weight video restoration transformer that predicts intermediate frames without any optical flow estimation by looking only the previous frame or following causality.
 
-## Please install basic CV libraries:
-
-    python, opencv-python, pytorch, torchvision, imageio. 
-    
-
-# Training: 
-
-To train on custom dataset or DAVIS dataset, simply run train.py and change the dataset address in it. 
-
-# Testing: 
-
-Inference on test data with test.py 
-
-
-
-Note: if you encounter any issue, feel free to raise a issue on github repo or contact authors at: saini.2@utexas.edu
-
+**Dataset**: [DAVIS](https://davischallenge.org/) \
+**Checkpoints**: [checkpoints](https://utexas-my.sharepoint.com/:f:/g/personal/krishna_durbha_my_utexas_edu/ElKFbDbDhERKuEb46NvEfesBldBWI63RKXUpNAJuiZLsAw?e=rrkZno) \
+**Presentation**: [Presentation](https://utexas-my.sharepoint.com/:f:/g/personal/krishna_durbha_my_utexas_edu/El1mNR0FcdtHpx6s-yAuCwEBq5mlFamLGRz_YfvPLk-oqQ?e=NoBxx4)
